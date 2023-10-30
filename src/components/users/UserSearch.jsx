@@ -1,8 +1,10 @@
 import { useContext, useState } from "react"
 import GithubContext from "../../context/github/GithubContext";
+import {AlertContext} from "../../context/alert/AlertContext";
 
 const UserSearch = () => {
   const {users, searchUsers, clearUsers} = useContext(GithubContext);
+  const {setAlert} = useContext(AlertContext);
 
   const [text, setText] = useState('');
   const handleChange = e => {
@@ -12,7 +14,7 @@ const UserSearch = () => {
   const handleSubmit = e => {
     e.preventDefault();
     if (!text) {
-      alert('Please enter smth');
+      setAlert('Please enter smth', 'error');
       return;
     }
     searchUsers(text);
