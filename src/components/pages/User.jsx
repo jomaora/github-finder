@@ -2,13 +2,20 @@ import {useContext, useEffect} from "react"
 import Spinner from "../layout/Spinner";
 import GithubContext from "../../context/github/GithubContext"
 import {useParams, Link} from "react-router-dom";
+import { loadUser } from "../../context/github/GithubActions";
 
 const User = () => {
-  const {user, loadUser, loading} = useContext(GithubContext);
+  const {user, dispatch, loading} = useContext(GithubContext);
   const params = useParams();
 
   useEffect(() => {
-    loadUser(params.login);
+    const setData = async () => {
+      const user = await loadUser(params.login);
+      dispatch({type: 'GET_USER', payload: user});
+    }
+    
+    dispatch({type: 'SET_LOADING'});
+    setData();
   }, []);
 
   if (loading || !user) {

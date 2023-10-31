@@ -1,9 +1,10 @@
 import { useContext, useState } from "react"
+import {searchUsers} from "../../context/github/GithubActions";
 import GithubContext from "../../context/github/GithubContext";
 import {AlertContext} from "../../context/alert/AlertContext";
 
 const UserSearch = () => {
-  const {users, searchUsers, clearUsers} = useContext(GithubContext);
+  const {users, dispatch} = useContext(GithubContext);
   const {setAlert} = useContext(AlertContext);
 
   const [text, setText] = useState('');
@@ -11,17 +12,20 @@ const UserSearch = () => {
     setText(e.target.value);
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
     if (!text) {
       setAlert('Please enter smth', 'error');
       return;
     }
-    searchUsers(text);
+    
+    dispatch({type: 'SET_LOADING'});
+    const users = await searchUsers(text);
+    dispatch({type: 'GET_USERS', payload: users})
     setText('');
   };
 
-  const handleClear = () => clearUsers();
+  const handleClear = () => dispatch({type: 'CLEAR_USERS'});
 
   return (
     <div className="grid grid-cols-1 xl:grids-cols-2 lg:grids-cols-2 md:grids-cols-2 mb-8 gap-8">
